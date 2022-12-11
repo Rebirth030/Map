@@ -1,90 +1,148 @@
 package com.example.map
 
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import android.util.Log
+import android.widget.SearchView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.location.LocationManagerCompat.getCurrentLocation
-
+import com.example.map.databinding.ActivityMapsBinding
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.example.map.databinding.ActivityMapsBinding
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import java.io.IOException
+import java.util.*
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+@Suppress("DEPRECATION")
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     private lateinit var binding: ActivityMapsBinding
+    private lateinit var map: GoogleMap
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var lastLocation: Location
+    private lateinit var addressText: String
 
-    private lateinit var currentLocation: Location
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private val permissionCode = 101
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                intent = Intent(binding.searchBar.context, SearchActivity::class.java)
+                intent.putExtra("startingLetters", p0)
+                startActivityForResult(intent, 201)
+                return false
+            }
+
+        })
+        binding.searchBar.setOnClickListener {
+            startActivity(Intent(this, SearchActivity::class.java))
+        }
     }
+
 
     override fun onMapReady(googleMap: GoogleMap) {
-        val latLng = LatLng(currentLocation.latitude,currentLocation.longitude)
-        val markerOptions = MarkerOptions().position(latLng).title("Current Location")
+        map = googleMap
 
-        googleMap?.animateCamera(CameraUpdateFactory.newLatLng(latLng))
-        googleMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,7f))
-        googleMap?.addMarker(markerOptions)
+        map.uiSettings.isZoomControlsEnabled = true
+        map.setOnMarkerClickListener(this)
 
-        getCurrentLocation()
+
+        setUpMap()
     }
 
-    private fun getCurrentLocation() {
+    override fun onMarkerClick(p0: Marker) = false
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 201 && resultCode == RESULT_OK) {
+            if (data != null) {
+                val lat = data.getDoubleExtra("Lat")
+                val long = data.getDoubleExtra("Lng")
+                val LatLng2 = LatLng(lat, long)
+            }
+
+        }
+    }
+
+
+    private fun setUpMap() {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                permissionCode
+                LOCATION_PERMISSION_REQUEST_CODE
             )
             return
         }
-        val getLocation = fusedLocationProviderClient.lastLocation.addOnSuccessListener(this) { location ->
+        map.isMyLocationEnabled = true
+        map.mapType = GoogleMap.MAP_TYPE_HYBRID
+
+        fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
+
             if (location != null) {
-                currentLocation = location
-
-                Toast.makeText(applicationContext,currentLocation.latitude.toString() + " " + currentLocation.longitude.toString(), Toast.LENGTH_SHORT).show()
-
-                val mapFragment = supportFragmentManager
-                    .findFragmentById(R.id.map) as SupportMapFragment
-                mapFragment.getMapAsync(this)
+                lastLocation = location
+                val currentLatLng = LatLng(location.latitude, location.longitude)
+                placeMarkerOnMap(currentLatLng)
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 18f))
             }
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            permissionCode -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                getCurrentLocation()
+    private fun placeMarkerOnMap(location: LatLng) {
+        val markerOptions = MarkerOptions().position(location)
+
+        markerOptions.title(getAddress(location))
+
+        map.addMarker(markerOptions)
+    }
+
+    private fun getAddress(latLng: LatLng): String {
+        // 1
+        val geocoder = Geocoder(this, Locale.getDefault())
+        val addresses: List<Address>?
+        var addressText = ""
+
+        try {
+            addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+            if (null != addresses && addresses.isNotEmpty()) {
+                addressText = addresses[0].getAddressLine(0)
+
             }
+        } catch (e: IOException) {
+            Log.e("MapsActivity", e.localizedMessage as String)
         }
 
+        return addressText
     }
+
+
 }
