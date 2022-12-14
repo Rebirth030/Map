@@ -7,11 +7,13 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.widget.SearchView
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.map.databinding.ActivityMapsBinding
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -21,6 +23,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import java.io.IOException
 import java.util.*
+
 
 @Suppress("DEPRECATION")
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
@@ -39,6 +42,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         super.onCreate(savedInstanceState)
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolBar)
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
@@ -46,8 +50,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        //searchBarInit()
+    }
+
+    /*private fun searchBarInit() {
         binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(p0: String?): Boolean {
+
                 return false
             }
 
@@ -62,6 +71,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         binding.searchBar.setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
         }
+    }*/
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
     }
 
 
@@ -75,18 +89,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         setUpMap()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val itemView = item.itemId
+        if (itemView == R.id.Random) {}
+        else if (itemView == R.id.marker) {
+            startActivityForResult(Intent(this, SearchActivity::class.java),201)
+        }
+        return false
+    }
+
     override fun onMarkerClick(p0: Marker) = false
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 201 && resultCode == RESULT_OK) {
-            if (data != null) {
-                val lat = data.getDoubleExtra("Lat")
-                val long = data.getDoubleExtra("Lng")
-                val LatLng2 = LatLng(lat, long)
-            }
-
+        if (requestCode == 201 && resultCode == RESULT_OK && data != null) {
+            placeMarkerOnMap(LatLng(data.getDoubleExtra("Lat",0.0), data.getDoubleExtra("Lng",0.0)))
         }
+        //binding.searchBar.setQuery("",true)
     }
 
 
@@ -123,6 +142,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         markerOptions.title(getAddress(location))
 
         map.addMarker(markerOptions)
+        map.animateCamera(CameraUpdateFactory.newLatLng(location))
     }
 
     private fun getAddress(latLng: LatLng): String {

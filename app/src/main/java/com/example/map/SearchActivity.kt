@@ -18,8 +18,6 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        intent = intent
-
         val lastSearchedAddresses = arrayOf("")
 
         val lastLocationAdapter =
@@ -28,7 +26,7 @@ class SearchActivity : AppCompatActivity() {
         binding.searchBar.setQuery(intent.getStringExtra("startingLetters"), true)
         binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(p0: String): Boolean {
-                val latLng = getAddresses(p0, 1)
+                val latLng = getAddresses(p0)
                 println(latLng.toString() + "nds")
                 intent.putExtra("Lat", latLng.latitude)
                 intent.putExtra("Lng", latLng.longitude)
@@ -44,8 +42,11 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
-    private fun getAddresses(address: String, maxResult: Int): LatLng {
+    private fun getAddresses(address: String): LatLng {
         val geocoder = Geocoder(this, Locale.getDefault())
-        return LatLng(geocoder.getFromLocationName(address, maxResult).get(0).latitude,geocoder.getFromLocationName(address, maxResult).get(0).longitude)
+        return LatLng(
+            geocoder.getFromLocationName(address, 1)[0].latitude,
+            geocoder.getFromLocationName(address, 1)[0].longitude
+        )
     }
 }
