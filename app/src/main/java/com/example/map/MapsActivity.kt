@@ -31,7 +31,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
-    private lateinit var addressText: String
+    private lateinit var arrayList: ArrayList<MarkerOptions>
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -50,28 +50,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
-        //searchBarInit()
+
     }
-
-    /*private fun searchBarInit() {
-        binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(p0: String?): Boolean {
-
-                return false
-            }
-
-            override fun onQueryTextChange(p0: String?): Boolean {
-                intent = Intent(binding.searchBar.context, SearchActivity::class.java)
-                intent.putExtra("startingLetters", p0)
-                startActivityForResult(intent, 201)
-                return false
-            }
-
-        })
-        binding.searchBar.setOnClickListener {
-            startActivity(Intent(this, SearchActivity::class.java))
-        }
-    }*/
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -93,7 +73,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         val itemView = item.itemId
         if (itemView == R.id.Random) {}
         else if (itemView == R.id.marker) {
-            startActivityForResult(Intent(this, SearchActivity::class.java),201)
+            val intent = Intent(this, SearchActivity::class.java)
+            intent.putExtra("markerArray", arrayList)
+            startActivityForResult(intent,201)
         }
         return false
     }
@@ -124,7 +106,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
         map.isMyLocationEnabled = true
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
-
         fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
 
             if (location != null) {
@@ -141,6 +122,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         markerOptions.title(getAddress(location))
 
+        arrayList.add(markerOptions)
         map.addMarker(markerOptions)
         map.animateCamera(CameraUpdateFactory.newLatLng(location))
     }

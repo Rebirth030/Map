@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Map</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="insertDestination">Please insert name of Destination</string>
+    <string name="or">Or</string>
+    <string name="insertLatitude">Please insert Latitude</string>
+    <string name="insertLongitude">Please insert Longitude</string>
+    <string name="createMarker">Create Marker</string>
+    <string name="delete">delete</string>
 </resources>
