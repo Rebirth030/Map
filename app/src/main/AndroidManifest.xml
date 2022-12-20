@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -15,6 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Map">
         <activity
+            android:name=".MapsActivity"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".SearchActivity"
             android:exported="false">
             <meta-data
@@ -27,7 +33,7 @@
             android:value="AIzaSyAKsdWOWwTFZGCiEbdUb55yRqRDQfW70Ek" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".StartActivity"
             android:exported="true"
             android:label="@string/title_activity_maps">
             <intent-filter>

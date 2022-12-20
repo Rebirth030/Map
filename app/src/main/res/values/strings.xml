@@ -7,4 +7,5 @@
     <string name="insertLongitude">Please insert Longitude</string>
     <string name="createMarker">Create Marker</string>
     <string name="delete">delete</string>
+    <string name="insertForMarkers">Please insert two destinations to create Markers</string>
 </resources>

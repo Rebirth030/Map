@@ -31,12 +31,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
-    private lateinit var arrayList: ArrayList<MarkerOptions>
-
-    companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1
-
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +68,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         if (itemView == R.id.Random) {}
         else if (itemView == R.id.marker) {
             val intent = Intent(this, SearchActivity::class.java)
-            intent.putExtra("markerArray", arrayList)
             startActivityForResult(intent,201)
         }
         return false
@@ -92,18 +85,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
 
     private fun setUpMap() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-            return
-        }
         map.isMyLocationEnabled = true
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
         fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
@@ -122,7 +103,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         markerOptions.title(getAddress(location))
 
-        arrayList.add(markerOptions)
+
         map.addMarker(markerOptions)
         map.animateCamera(CameraUpdateFactory.newLatLng(location))
     }
