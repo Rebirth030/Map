@@ -1,7 +1,6 @@
 package com.example.map
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
@@ -10,7 +9,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import com.example.map.databinding.ActivityMapsBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -65,10 +63,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val itemView = item.itemId
-        if (itemView == R.id.Random) {}
-        else if (itemView == R.id.marker) {
+        if (itemView == R.id.Random) {
+        } else if (itemView == R.id.marker) {
             val intent = Intent(this, SearchActivity::class.java)
-            startActivityForResult(intent,201)
+            startActivityForResult(intent, 201)
         }
         return false
     }
@@ -78,13 +76,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 201 && resultCode == RESULT_OK && data != null) {
-            placeMarkerOnMap(LatLng(data.getDoubleExtra("Lat",0.0), data.getDoubleExtra("Lng",0.0)))
+            placeMarkerOnMap(
+                LatLng(
+                    data.getDoubleExtra("Lat", 0.0),
+                    data.getDoubleExtra("Lng", 0.0)
+                )
+            )
         }
-        //binding.searchBar.setQuery("",true)
     }
 
 
     private fun setUpMap() {
+        MapUtil.checkPermission(this)
         map.isMyLocationEnabled = true
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
         fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
