@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Karte</string>
+    <string name="or">ODER</string>
+    <string name="insertLatitude">Bitte gieb die Latitude ein</string>
+    <string name="insertLongitude">Bitte gieb die Longitude ein</string>
+    <string name="createMarker">Erstelle Marker</string>
+    <string name="delete">löschen</string>
+    <string name="insertForMarkers">Bitte gieb zwei Ziele ein, um Marker zu erstellen</string>
+    <string name="insertDestination">Bitte gieb den namen des Ziels ein</string>
+    <string name="locationError">Du musst der standortlokalisierung zustimmen, um diese App zu nutzen!!</string>
+    <string name="distanceHeaderFirst">Distanz zwischen </string>
+    <string name="and">und</string>
+    <string name="dist">Distanz</string>
+    <string name="LocationNotFound">Fehler: Ort nicht gefunden</string>
+    <string name="validDataError">Fülle bitte alle Felder mit richtigen Daten</string>
+    <string name="add_marker">Marker hinzufügen</string>
+    <string name="change_language">Sprache wechseln</string>
+    <string name="notAvailable">Das ist momentan nicht möglich</string>
+    <string name="getDist">Distanz zwischen markern Berechnen</string>
+    <string name="chooseMarker">Wähle genau ZWEI Marker</string>
+    <string name="ErrorTwoMarker">Fehler: Wähle bitte genau zwei Marker</string>
+</resources>

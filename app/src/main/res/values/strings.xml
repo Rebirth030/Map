@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Map</string>
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_maps" translatable="false">MapsActivity</string>
     <string name="insertDestination">Please insert name of Destination</string>
     <string name="or">Or</string>
     <string name="insertLatitude">Please insert Latitude</string>
@@ -8,4 +8,16 @@
     <string name="createMarker">Create Marker</string>
     <string name="delete">delete</string>
     <string name="insertForMarkers">Please insert two destinations to create Markers</string>
+    <string name="locationError">You have to accept the localization, to use the app!!</string>
+    <string name="distanceHeaderFirst">Distance between </string>
+    <string name="and"> and</string>
+    <string name="dist">Distance </string>
+    <string name="LocationNotFound">Error: Location not found</string>
+    <string name="validDataError">Please fill every field with valid data</string>
+    <string name="add_marker">Add Marker</string>
+    <string name="change_language">Change Language</string>
+    <string name="notAvailable">This is not available right now</string>
+    <string name="getDist">Get distance between marker</string>
+    <string name="chooseMarker">Choose TWO marker</string>
+    <string name="ErrorTwoMarker">Error: Please choose exactly two Marker</string>
 </resources>

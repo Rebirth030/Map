@@ -14,6 +14,17 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolBar2"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:background="@color/grey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/app_name"
+            app:titleTextColor="@color/white" />
+
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"

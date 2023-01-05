@@ -8,10 +8,18 @@ import com.example.map.databinding.ActivitySearchBinding
 import com.google.android.gms.maps.model.LatLng
 import java.util.*
 
-
+/**
+ * ZUSATZINHALT
+ * Aktivität um einen neuen Marker zu sätzen
+ */
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
 
+    /**
+     * ZUSATZINHALT
+     * onCreate der Searchaktivität
+     * ruf textViewInit auf
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
@@ -21,6 +29,10 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * ZUSATZINHALT
+     * setzt den createMarker Button um damit die eingabe der text Felder entgegen zu nehmen und entweder mit get Ardess die LatLong werte zu erhalten oder direkt mit den LatLong werten die Aktivität zu beenden.
+     */
     private fun textViewInit() {
         binding.createMarker.setOnClickListener {
             val txtOne = binding.etLocationName.text.toString()
@@ -34,19 +46,22 @@ class SearchActivity : AppCompatActivity() {
                     setResult(RESULT_OK, intent)
                     finish()
                 } catch (e: java.lang.IndexOutOfBoundsException) {
-                    Toast.makeText(this, "Error: Location not found", Toast.LENGTH_SHORT).show()
+                    MapUtil.vibratePhone(this)
+                    Toast.makeText(this, getString(R.string.LocationNotFound), Toast.LENGTH_SHORT).show()
                 }
-            }
-            if (txtTwo != "" && txtThree != "") {
-                intent.putExtra("Lat", txtTwo)
-                intent.putExtra("Lng", txtThree)
+            } else if (txtTwo != "" && txtThree != "") {
+                intent.putExtra("Lat", txtTwo.toDouble())
+                intent.putExtra("Lng", txtThree.toDouble())
                 setResult(RESULT_OK, intent)
                 finish()
             }
         }
     }
 
-
+    /**
+     * ZUSATZINHALT
+     * gibt die LatLong werte einer Adresse zurück
+     */
     private fun getAddresses(address: String): LatLng {
         val geocoder = Geocoder(this, Locale.getDefault())
         val addressGeo = geocoder.getFromLocationName(address, 1)
