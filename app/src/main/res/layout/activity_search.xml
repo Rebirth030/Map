@@ -47,7 +47,7 @@
             android:ems="10"
             android:hint="@string/insertLatitude"
             android:importantForAutofill="no"
-            android:inputType="numberDecimal"
+            android:inputType="numberDecimal|numberSigned"
             android:minHeight="48dp" />
 
         <EditText
@@ -60,7 +60,7 @@
             android:ems="10"
             android:hint="@string/insertLongitude"
             android:importantForAutofill="no"
-            android:inputType="numberDecimal"
+            android:inputType="numberDecimal|numberSigned"
             android:minHeight="48dp" />
 
         <Button
